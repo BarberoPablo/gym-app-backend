@@ -21,6 +21,10 @@ app.use(express.json());
 app.use("/users", userRoutes);
 app.use("/exercises", exerciseRoutes);
 
+app.get("/", (req, res) => {
+  res.send("Backend is running!");
+});
+
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
