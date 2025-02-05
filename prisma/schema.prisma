@@ -30,6 +30,6 @@ model RoutineExercise {
   id        Int     @id @default(autoincrement())
   routine   Routine @relation(fields: [routineId], references: [id])
   routineId Int
-  exercise  Json
+  exercise  Json // Stores an object like { name: string, description?: string, image?: string, muscles?: string[] } 
   sets      Json // Stores an array of objects like { reps: number, weight: number }
 }
