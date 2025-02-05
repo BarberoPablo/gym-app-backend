@@ -14,7 +14,7 @@ model User {
   id       String    @id @default(uuid())
   username String    @unique
   email    String    @unique
-  avatar   String? // Guardar la foto de perfil de Google
+  avatar   String?
   routines Routine[]
 }
 
@@ -27,19 +27,9 @@ model Routine {
 }
 
 model RoutineExercise {
-  id         Int      @id @default(autoincrement())
-  routine    Routine  @relation(fields: [routineId], references: [id])
-  routineId  Int
-  exercise   Exercise @relation(fields: [exerciseId], references: [id])
-  exerciseId Int
-  sets       Json // Stores an array of objects like { reps: number, weight: number }
-}
-
-model Exercise {
-  id              Int               @id @default(autoincrement())
-  name            String            @unique
-  description     String?
-  image           String?
-  muscles         String[]
-  RoutineExercise RoutineExercise[]
+  id        Int     @id @default(autoincrement())
+  routine   Routine @relation(fields: [routineId], references: [id])
+  routineId Int
+  exercise  Json
+  sets      Json // Stores an array of objects like { reps: number, weight: number }
 }
