@@ -12,8 +12,8 @@ const prisma = new PrismaClient();
 // CORS
 app.use(
   cors({
-    origin: "http://localhost:3000", // Permite solicitudes desde el frontend
-    credentials: true, // Permite el envío de cookies y encabezados de autenticación
+    origin: "*",
+    credentials: true,
   })
 );
 
@@ -25,7 +25,4 @@ app.get("/", (req, res) => {
   res.send("Backend is running!");
 });
 
-const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+export default app;
