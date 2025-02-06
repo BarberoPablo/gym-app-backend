@@ -1,42 +1,196 @@
 import { PrismaClient } from "@prisma/client";
 
+//npx ts-node populateExercises.ts to execute
+
 const prisma = new PrismaClient();
 
-const exercises = [
+const allExercises = [
   {
-    name: "Deadlift",
-    image: "https://gymgeek.com/wp-content/uploads/2023/10/traditional-deadlift.png",
-  },
-  {
-    name: "Leg Press",
-    image: "https://gymgeek.com/wp-content/uploads/2023/10/leg-press-how-to.png",
-  },
-  {
-    name: "Leg Curl",
-    image: "https://gymgeek.com/wp-content/uploads/2024/02/lying-leg-curls-square.png",
-  },
-  {
-    name: "Leg Extensions ",
-    image: "https://gymgeek.com/wp-content/uploads/2024/02/machine-leg-extensions.png",
-  },
-  {
-    name: "Calf Raises",
-    image: "https://gymgeek.com/wp-content/uploads/2023/10/calf-raises.png",
-  },
-  {
-    name: "Lateral Raises",
-    image: "https://gymgeek.com/wp-content/uploads/2024/02/dumbbell-lateral-raises-square.png",
+    name: "Press Arnold",
+    description: "",
+    image: "",
+    muscles: ["shoulders", "triceps"],
   },
   {
     name: "Reverse Lateral Raises",
+    description: "",
     image: "",
+    muscles: ["shoulders", "traps"],
+  },
+  {
+    name: "Seated Dumbbell Lateral Raises",
+    description: "",
+    image: "",
+    muscles: ["shoulders"],
+  },
+  {
+    name: "Smith Machine Press",
+    description: "",
+    image: "",
+    muscles: ["shoulders", "triceps"],
+  },
+  {
+    name: "Standing Cable Lateral Raises",
+    description: "",
+    image: "",
+    muscles: ["shoulders"],
+  },
+  {
+    name: "Standing Dumbbell Lateral Raises",
+    description: "",
+    image: "",
+    muscles: ["shoulders"],
+  },
+  {
+    name: "Bench Press",
+    description: "",
+    image: "",
+    muscles: ["chest", "triceps", "shoulders"],
+  },
+  {
+    name: "Cable Crossovers",
+    description: "",
+    image: "",
+    muscles: ["chest"],
+  },
+  {
+    name: "Incline Barbell Press",
+    description: "",
+    image: "",
+    muscles: ["chest", "shoulders", "triceps"],
+  },
+  {
+    name: "Incline Dumbbell Press",
+    description: "",
+    image: "",
+    muscles: ["chest", "shoulders", "triceps"],
+  },
+  {
+    name: "Lat Pulldown",
+    description: "",
+    image: "",
+    muscles: ["back", "biceps"],
+  },
+  {
+    name: "One-Arm Dumbbell Row",
+    description: "",
+    image: "",
+    muscles: ["back", "biceps"],
+  },
+  {
+    name: "Pull-Ups",
+    description: "",
+    image: "",
+    muscles: ["back", "biceps"],
+  },
+  {
+    name: "Seated Low Cable Row",
+    description: "",
+    image: "",
+    muscles: ["back", "biceps"],
+  },
+  {
+    name: "T-Bar Row",
+    description: "",
+    image: "",
+    muscles: ["back", "biceps"],
+  },
+  {
+    name: "Scott Curl (Preacher Curl with Dumbbell)",
+    description: "",
+    image: "",
+    muscles: ["biceps"],
+  },
+  {
+    name: "Standing EZ Bar Biceps Curl",
+    description: "",
+    image: "",
+    muscles: ["biceps"],
+  },
+  {
+    name: "Straight Bar Biceps Curl",
+    description: "",
+    image: "",
+    muscles: ["biceps"],
+  },
+  {
+    name: "Lying French Press",
+    description: "",
+    image: "",
+    muscles: ["triceps"],
+  },
+  {
+    name: "One-Arm Triceps Extension",
+    description: "",
+    image: "",
+    muscles: ["triceps"],
+  },
+  {
+    name: "Seated French Press",
+    description: "",
+    image: "",
+    muscles: ["triceps"],
+  },
+  {
+    name: "Triceps Rope Pushdown",
+    description: "",
+    image: "",
+    muscles: ["triceps"],
+  },
+  {
+    name: "45° Leg Press",
+    description: "",
+    image: "",
+    muscles: ["quadriceps", "glutes"],
+  },
+  {
+    name: "Hack Squat",
+    description: "",
+    image: "",
+    muscles: ["quadriceps", "glutes"],
+  },
+  {
+    name: "Leg Extension",
+    description: "",
+    image: "",
+    muscles: ["quadriceps"],
+  },
+  {
+    name: "Squat",
+    description: "",
+    image: "",
+    muscles: ["quadriceps", "glutes", "hamstring"],
+  },
+  {
+    name: "Deadlift",
+    description: "",
+    image: "",
+    muscles: ["hamstring", "glutes", "back"],
+  },
+  {
+    name: "Lying Leg Curl",
+    description: "",
+    image: "",
+    muscles: ["hamstring"],
+  },
+  {
+    name: "Romanian Deadlift",
+    description: "",
+    image: "",
+    muscles: ["hamstring", "glutes", "back"],
+  },
+  {
+    name: "Calf Raises",
+    description: "",
+    image: "",
+    muscles: ["calves"],
   },
 ];
 
 async function createExercisesBatch() {
   try {
     await prisma.exercise.createMany({
-      data: exercises,
+      data: allExercises,
       skipDuplicates: true, // Evita errores por duplicados
     });
 
