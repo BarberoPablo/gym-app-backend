@@ -7,16 +7,15 @@ export type Exercise = {
   name: string;
   description?: string;
   image?: string;
-  muscles?: string[];
+  muscles?: Muscle[];
 };
 
-/**
- * model Exercise {
- * id              Int
- * name            String
- * description     String?
- * image           String?
- * muscles         String[]
- * RoutineExercise RoutineExercise[]
- * }
- */
+export enum Muscle {
+  Chest = "Chest",
+  Back = "Back",
+  Shoulders = "Shoulders",
+  Biceps = "Biceps",
+  Triceps = "Triceps",
+  Legs = "Legs",
+  Core = "Core",
+}

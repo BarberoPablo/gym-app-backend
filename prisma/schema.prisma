@@ -19,17 +19,36 @@ model User {
 }
 
 model Routine {
-  id               Int               @id @default(autoincrement())
-  name             String
-  user             User              @relation(fields: [userId], references: [id])
-  userId           String
-  routineExercises RoutineExercise[]
+  id        Int               @id @default(autoincrement())
+  name      String
+  user      User              @relation(fields: [userId], references: [id])
+  userId    String
+  exercises RoutineExercise[]
+}
+
+model Exercise {
+  id          Int               @id @default(autoincrement())
+  name        String
+  description String?
+  image       String?
+  muscles     String[]
+  routines    RoutineExercise[]
 }
 
 model RoutineExercise {
-  id        Int     @id @default(autoincrement())
-  routine   Routine @relation(fields: [routineId], references: [id])
-  routineId Int
-  exercise  Json // Stores an object like { name: string, description?: string, image?: string, muscles?: string[] } 
-  sets      Json // Stores an array of objects like { reps: number, weight: number }
+  id         Int      @id @default(autoincrement())
+  routine    Routine  @relation(fields: [routineId], references: [id])
+  routineId  Int
+  exercise   Exercise @relation(fields: [exerciseId], references: [id])
+  exerciseId Int
+  sets       Set[]
+}
+
+model Set {
+  id                Int             @id @default(autoincrement())
+  routineExercise   RoutineExercise @relation(fields: [routineExerciseId], references: [id])
+  routineExerciseId Int
+  reps              Int
+  weight            Float?
+  restTime          Int?
 }
