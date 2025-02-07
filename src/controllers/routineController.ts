@@ -5,52 +5,55 @@ const prisma = new PrismaClient();
 
 export async function createRoutine(req: Request, res: Response) {
   const { name, userId, exercises } = req.body;
+
   if (!name || !userId) return res.status(400).json({ message: "Name and userId are required" });
 
   try {
-    const routine = await prisma.routine.create({
-      data: { name, userId },
-    });
+    const result = await prisma.$transaction(async (prisma) => {
+      const routine = await prisma.routine.create({
+        data: { name, userId },
+      });
 
-    const routineExercisesData = exercises.map((exercise: any) => ({
-      routineId: routine.id,
-      exerciseId: exercise.id,
-    }));
+      const routineExercisesData = exercises.map((exercise: any) => ({
+        routineId: routine.id,
+        exerciseId: exercise.id,
+      }));
 
-    const routineExercises = await prisma.routineExercise.createManyAndReturn({
-      data: routineExercisesData,
-    });
+      const routineExercises = await prisma.routineExercise.createManyAndReturn({
+        data: routineExercisesData,
+      });
 
-    const sets: any = [];
+      const sets: any = [];
 
-    exercises.forEach((exercise: any, index: number) => {
-      exercise.sets.forEach((set: any) =>
-        sets.push({
-          ...set,
-          routineExerciseId: routineExercises[index].id,
-        })
-      );
-    });
+      exercises.forEach((exercise: any, index: number) => {
+        exercise.sets.forEach((set: any) =>
+          sets.push({
+            ...set,
+            routineExerciseId: routineExercises[index].id,
+          })
+        );
+      });
 
-    await prisma.set.createManyAndReturn({
-      data: sets,
-    });
+      await prisma.set.createManyAndReturn({
+        data: sets,
+      });
 
-    const routineFromDB = await prisma.routine.findUnique({
-      where: { id: routine.id },
-      include: {
-        exercises: {
-          include: {
-            exercise: true,
-            sets: true,
+      return await prisma.routine.findUnique({
+        where: { id: routine.id },
+        include: {
+          exercises: {
+            include: {
+              exercise: true,
+              sets: true,
+            },
           },
         },
-      },
+      });
     });
 
     return res.status(201).json({
       message: "Routine created successfully",
-      routineFromDB,
+      routine: result,
     });
   } catch (error: any) {
     if (error.code === "P2002") {
