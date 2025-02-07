@@ -1,5 +1,6 @@
-import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { Request, Response } from "express";
+import { ExerciseInfo } from "../types";
 
 const prisma = new PrismaClient();
 
@@ -24,13 +25,33 @@ export async function getExercise(req: Request, res: Response) {
 
 export async function getExercises(req: Request, res: Response) {
   try {
-    const exercise = await prisma.exercise.findMany();
+    const exercises = await prisma.exercise.findMany();
 
-    if (!exercise) {
+    if (!exercises) {
       return res.status(404).json({ message: "Exercise not found" });
     }
 
-    return res.status(200).json({ exercise });
+    /* 
+    Parse exercises muscles
+    {shoulders: [{ id: 1, name: "Press Arnold", "description": "", "image": "", "muscles": ["shoulders","triceps"] }]}
+    */
+
+    const formattedExercises: Record<string, ExerciseInfo[]> = {
+      shoulders: [],
+      chest: [],
+      back: [],
+      biceps: [],
+      triceps: [],
+      quadriceps: [],
+      hamstring: [],
+      calves: [],
+    };
+
+    exercises.forEach((exercise) => {
+      formattedExercises[exercise.muscles[0]].push(exercise as ExerciseInfo);
+    });
+
+    return res.status(200).json({ data: formattedExercises });
   } catch (error) {
     console.error("Error fetching exercise:", error);
     return res.status(500).json({ error: "An error occurred while fetching the exercise." });
@@ -49,7 +70,7 @@ export async function createExercise(req: Request, res: Response) {
 
     return res.status(201).json({
       message: "Exercise created successfully",
-      exercise: newExercise,
+      data: newExercise,
     });
   } catch (error: any) {
     if (error.code === "P2002") {
