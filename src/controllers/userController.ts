@@ -18,12 +18,12 @@ export async function getUsers(req: Request, res: Response) {
 
 export async function syncUser(req: Request, res: Response) {
   try {
-    console.log("syncUser called"); // Log para verificar que la función se está ejecutando
+    console.log("syncUser called"); // Log para depuración
     const { access_token } = req.body;
 
     if (!access_token) {
-      console.error("Access token is missing"); // Log para verificar si falta el token
-      return res.status(400).json({ error: "Access token is required" });
+      console.error("Access token is missing");
+      return res.status(401).json({ error: "Access token is required" });
     }
 
     // Obtener el usuario autenticado desde Supabase
@@ -34,10 +34,10 @@ export async function syncUser(req: Request, res: Response) {
 
     if (error || !user) {
       console.error("Error getting user from Supabase:", error);
-      return res.status(400).json({ error: "Error getting user from Supabase" });
+      return res.status(401).json({ error: "Invalid or expired access token" });
     }
 
-    // Buscar el usuario en la base de datos
+    // Buscar o crear usuario en la base de datos
     let existingUser = await prisma.user.findUnique({
       where: { email: user.email },
     });
@@ -52,12 +52,12 @@ export async function syncUser(req: Request, res: Response) {
         },
       });
     } else {
-      console.log("User already exists in the database:", existingUser); // Log para verificar si el usuario ya existe
+      console.log("User already exists in the database:", existingUser);
     }
 
-    return res.json({ message: "User synced successfully", user: existingUser });
+    return res.status(200).json({ message: "User synced successfully", user: existingUser });
   } catch (err) {
-    console.error("Error syncing user:", err); // Log para capturar errores inesperados
+    console.error("Error syncing user:", err);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 }
