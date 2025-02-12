@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { NextFunction, Request, Response } from "express";
+import jwt, { JwtPayload, TokenExpiredError } from "jsonwebtoken";
 
 declare global {
   namespace Express {
@@ -10,8 +10,8 @@ declare global {
 }
 
 const SECRET_KEY = process.env.JWT_SECRET || "default_secret_key";
+
 export function authenticateToken(req: Request, res: Response, next: NextFunction): void {
-  console.log({ SECRET_KEY });
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -20,13 +20,16 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
   }
 
   const token = authHeader.split(" ")[1];
-  console.log({ token });
+
   try {
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
-    console.log({ decoded });
-    req.user = decoded; // Asegúrate de que `user` esté definido en `Request`
+    req.user = decoded;
     next();
   } catch (error) {
+    if (error instanceof TokenExpiredError) {
+      res.status(401).json({ error: "Token expired. Please log in again." });
+      return;
+    }
     res.status(403).json({ error: "Invalid token." });
   }
 }

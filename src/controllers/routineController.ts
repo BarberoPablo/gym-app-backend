@@ -65,96 +65,50 @@ export async function createRoutine(req: Request, res: Response) {
   }
 }
 
-/* export async function getRoutine(req: Request, res: Response) {
-  const { id } = req.params;
-
-  try {
-    const routine = await prisma.routine.findUnique({
-      where: { id: Number(id) },
-      select: {
-        id: true,
-        name: true,
-        exercises: {
-          select: {
-            exercise: {
-              select: {
-                name: true,
-              },
-            },
-            sets: {
-              select: {
-                reps: true,
-                weight: true,
-                restTime: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    if (!routine) {
-      return res.status(404).json({ message: "Routine not found" });
-    }
-
-    const formattedRoutine = [routine].map((routine) => ({
-      id: routine.id,
-      name: routine.name,
-      exercises: routine.exercises.map((exercise) => ({
-        name: exercise.exercise.name,
-        sets: exercise.sets,
-      })),
-    }));
-
-    return res.status(200).json(formattedRoutine);
-  } catch (error) {
-    console.error("Error fetching routine:", error);
-    return res.status(500).json({ error: "An error occurred while fetching the routine." });
-  }
-} */
-
 export async function getUserRoutines(req: Request, res: Response) {
-  const { id } = req.params;
-
+  const { sub: userId } = req.user ?? {};
   try {
-    const routines = await prisma.routine.findMany({
-      where: { userId: id },
-      select: {
-        id: true,
-        name: true,
-        exercises: {
-          select: {
-            exercise: {
-              select: {
-                name: true,
+    console.log(userId);
+    if (userId) {
+      const routines = await prisma.routine.findMany({
+        where: { userId },
+        select: {
+          id: true,
+          name: true,
+          exercises: {
+            select: {
+              exercise: {
+                select: {
+                  name: true,
+                },
               },
-            },
-            sets: {
-              select: {
-                reps: true,
-                weight: true,
-                restTime: true,
+              sets: {
+                select: {
+                  reps: true,
+                  weight: true,
+                  restTime: true,
+                },
               },
             },
           },
         },
-      },
-    });
+      });
 
-    const formattedRoutines = routines.map((routine) => ({
-      id: routine.id,
-      name: routine.name,
-      exercises: routine.exercises.map((exercise) => ({
-        name: exercise.exercise.name,
-        sets: exercise.sets,
-      })),
-    }));
+      const formattedRoutines = routines.map((routine) => ({
+        id: routine.id,
+        name: routine.name,
+        exercises: routine.exercises.map((exercise) => ({
+          name: exercise.exercise.name,
+          sets: exercise.sets,
+        })),
+      }));
 
-    if (!routines) {
-      return res.status(404).json({ message: "Routines not found" });
+      if (!routines) {
+        return res.status(404).json({ message: "Routines not found" });
+      }
+
+      return res.status(200).json(formattedRoutines);
     }
-
-    return res.status(200).json(formattedRoutines);
   } catch (error) {
     console.error("Error fetching routines:", error);
     return res.status(500).json({ error: "An error occurred while fetching the routines." });
