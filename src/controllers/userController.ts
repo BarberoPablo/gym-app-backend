@@ -26,7 +26,7 @@ export async function syncUser(req: Request, res: Response) {
       return res.status(401).json({ error: "Access token is required" });
     }
 
-    // Obtener el usuario autenticado desde Supabase
+    // Supabase authenticated user
     const {
       data: { user },
       error,
@@ -37,7 +37,7 @@ export async function syncUser(req: Request, res: Response) {
       return res.status(401).json({ error: "Invalid or expired access token" });
     }
 
-    // Buscar o crear usuario en la base de datos
+    // Search or create user in database
     let existingUser = await prisma.user.findUnique({
       where: { email: user.email },
     });
@@ -46,7 +46,7 @@ export async function syncUser(req: Request, res: Response) {
       existingUser = await prisma.user.create({
         data: {
           id: user.id,
-          username: user.email!.split("@")[0], // Username basado en el email
+          username: user.email!.split("@")[0],
           email: user.email!,
           avatar: user.user_metadata.avatar_url || null,
         },
@@ -54,6 +54,15 @@ export async function syncUser(req: Request, res: Response) {
     } else {
       console.log("User already exists in the database:", existingUser);
     }
+
+    // Set cookies from server
+    const isProd = process.env.NODE_ENV === "production";
+
+    res.cookie("access_token", access_token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+    });
 
     return res.status(200).json({ message: "User synced successfully", user: existingUser });
   } catch (err) {

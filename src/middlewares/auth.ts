@@ -18,8 +18,12 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
     res.status(401).json({ error: "Access denied. No token provided." });
     return;
   }
-
   const token = authHeader.split(" ")[1];
+
+  if (!token) {
+    res.status(401).json({ error: "Access denied. No token provided." });
+    return;
+  }
 
   try {
     const decoded = jwt.verify(token, SECRET_KEY) as JwtPayload;
