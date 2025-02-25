@@ -6,6 +6,7 @@ export const muscles: Record<Muscle, string> = {
   shoulders: "Shoulders",
   biceps: "Biceps",
   triceps: "Triceps",
-  legs: "Legs",
-  core: "Core",
+  quadriceps: "Quadriceps",
+  hamstrings: "Hamstrings",
+  calves: "Calves",
 };

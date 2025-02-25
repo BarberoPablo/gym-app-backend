@@ -15,13 +15,13 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    res.status(401).json({ error: "Access denied. No token provided." });
+    res.status(401).json({ error: "No token provided." });
     return;
   }
   const token = authHeader.split(" ")[1];
 
   if (!token) {
-    res.status(401).json({ error: "Access denied. No token provided." });
+    res.status(401).json({ error: "No token provided." });
     return;
   }
 
@@ -30,8 +30,9 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
     req.user = decoded;
     next();
   } catch (error) {
+    console.log("error");
     if (error instanceof TokenExpiredError) {
-      res.status(401).json({ error: "Token expired. Please log in again." });
+      res.status(401).json({ error: "Token expired." });
       return;
     }
     res.status(403).json({ error: "Invalid token." });

@@ -43,7 +43,7 @@ export async function getExercises(req: Request, res: Response) {
       biceps: [],
       triceps: [],
       quadriceps: [],
-      hamstring: [],
+      hamstrings: [],
       calves: [],
     };
 

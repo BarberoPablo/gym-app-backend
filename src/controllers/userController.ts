@@ -18,7 +18,6 @@ export async function getUsers(req: Request, res: Response) {
 
 export async function syncUser(req: Request, res: Response) {
   try {
-    console.log("syncUser called"); // Log para depuración
     const { access_token } = req.body;
 
     if (!access_token) {
@@ -54,9 +53,6 @@ export async function syncUser(req: Request, res: Response) {
     } else {
       console.log("User already exists in the database:", existingUser);
     }
-
-    // Set cookies from server
-    const isProd = process.env.NODE_ENV === "production";
 
     res.cookie("access_token", access_token, {
       httpOnly: true,
