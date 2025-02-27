@@ -1,10 +1,11 @@
-import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { Request, Response } from "express";
 
 const prisma = new PrismaClient();
 
 export async function createRoutine(req: Request, res: Response) {
-  const { name, userId, exercises } = req.body;
+  const { name, exercises } = req.body;
+  const userId = req.user?.sub;
 
   if (!name || !userId) return res.status(400).json({ message: "Name and userId are required" });
 

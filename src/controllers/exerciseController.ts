@@ -31,11 +31,6 @@ export async function getExercises(req: Request, res: Response) {
       return res.status(404).json({ message: "Exercise not found" });
     }
 
-    /* 
-    Parse exercises muscles
-    {shoulders: [{ id: 1, name: "Press Arnold", "description": "", "image": "", "muscles": ["shoulders","triceps"] }]}
-    */
-
     const formattedExercises: Record<string, ExerciseInfo[]> = {
       shoulders: [],
       chest: [],

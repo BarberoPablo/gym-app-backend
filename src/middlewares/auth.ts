@@ -9,7 +9,7 @@ declare global {
   }
 }
 
-const SECRET_KEY = process.env.JWT_SECRET || "default_secret_key";
+const SECRET_KEY = process.env.JWT_SECRET || "";
 
 export function authenticateToken(req: Request, res: Response, next: NextFunction): void {
   const authHeader = req.headers.authorization;
@@ -30,7 +30,7 @@ export function authenticateToken(req: Request, res: Response, next: NextFunctio
     req.user = decoded;
     next();
   } catch (error) {
-    console.log("error");
+    console.log("Token verification error:", error);
     if (error instanceof TokenExpiredError) {
       res.status(401).json({ error: "Token expired." });
       return;
